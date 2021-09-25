@@ -22,7 +22,7 @@ win=tkinter.Tk() # defines window
 win.title('Molehill %s' % program_version) # titles window
 win.geometry('500x500') # sets window resolution
 win.resizable(height = None, width = None)
-picture = tkinter.PhotoImage(file=r'constutions.png').subsample(5,5) #Defines the image
+picture = tkinter.PhotoImage(file=r'constitution.png').subsample(5,5) #Defines the image
 
 def set_layout1():
     """Sets layout to layout 1."""
