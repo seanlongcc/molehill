@@ -47,7 +47,7 @@ def text_constitution():
     # Will only proceed if there is no text displaying.
     if text_displaying == False:
 		# Creates textbox and inserts content into textbox
-	    window_content = tkinter.scrolledtext.ScrolledText(win, width=58, height=27)
+	    window_content = tkinter.scrolledtext.ScrolledText(win, wrap = tkinter.WORD, width=58, height=27)
 	    window_content.insert(tkinter.END, text)
 	    
 	    window_content.grid(row=2, columnspan=20) # Place widget on grid
