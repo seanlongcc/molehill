@@ -7,7 +7,7 @@ from tkinter import StringVar, filedialog
 
 #defines the window
 win = tk.Tk()
-win.title('lilownscript')
+win.title('Molehill V2')
 win.geometry('500x500')
 
 #picture for testing
