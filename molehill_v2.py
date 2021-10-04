@@ -1,4 +1,4 @@
-#Sean Version
+#Sean's Version
 import tkinter as tk
 import tkinter.scrolledtext as st
 import tkinter.messagebox
