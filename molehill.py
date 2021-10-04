@@ -1,4 +1,4 @@
-#Week 09/19/2021
+#Week 10/04/2021
 #Task:
 #Create a python script that opens a window that has a start button on it. 
 #When you click the start button, a picture and text will pop up. 
@@ -16,13 +16,19 @@ import os
 abspath = os.path.abspath(__file__) # Get current file's directory
 os.chdir(os.path.dirname(abspath)) # Change working directory to current file's
 
-program_version = "20210924"
+program_version = "20211004"
 
 win=tkinter.Tk() # defines window
 win.title('Molehill %s' % program_version) # titles window
-win.geometry('500x500') # sets window resolution
+win.geometry('800x600') # sets window resolution
 win.resizable(height = None, width = None)
 picture = tkinter.PhotoImage(file=r'constitution.png').subsample(5,5) #Defines the image
+global text 
+text = "" # initialises text
+try:
+	text = open('constitution.txt', 'r').read()
+except Exception as e:
+	tkinter.messagebox.showinfo("ERROR","%s" % e)
 
 def set_layout1():
     """Sets layout to layout 1."""
@@ -41,57 +47,54 @@ def set_layout1():
 
 def text_constitution():
     """Changes the text of button to the text of the US constitution after clicking it."""
-    text = "US constitution: We the People of the United States, \nin Order to form a more perfect Union, establish Justice, \ninsure domestic Tranquility, provide for the common defence, \npromote the general Welfare, and secure the Blessings of Liberty to \nourselves and our Posterity,do ordain and establish \nthis Constitution for the United States of America."
-    global window_content, text_displaying, pic_displaying # Three global variables defined in set_layout1()
+    global window_content, text_displaying, pic_displaying, text # Three global variables defined in set_layout1()
     window_content.destroy() # Destroys current content widget
     # Will only proceed if there is no text displaying.
     if text_displaying == False:
-		# Creates textbox and inserts content into textbox
-	    window_content = tkinter.scrolledtext.ScrolledText(win, wrap = tkinter.WORD, width=58, height=27)
-	    window_content.insert(tkinter.END, text)
-	    
-	    window_content.grid(row=2, columnspan=20) # Place widget on grid
-	    text_displaying, pic_displaying = True, False # Refreshes state variables
+        # Creates textbox and inserts content into textbox
+        window_content = tkinter.scrolledtext.ScrolledText(win, wrap = tkinter.WORD, width=58, height=27)
+        window_content.insert(tkinter.END, text)
+        
+        window_content.grid(row=2, columnspan=20) # Place widget on grid
+        text_displaying, pic_displaying = True, False # Refreshes state variables
     else:
-	    text_displaying, pic_displaying = False, False # refreshes state variables
+        text_displaying, pic_displaying = False, False # refreshes state variables
 
 def pic_constitution():
     """Changes the text of button to the picture of the US constitution after clicking it."""
     global window_content, text_displaying, pic_displaying
     window_content.destroy()
     if pic_displaying == False:
-	    window_content = tkinter.Label(win, image=picture, width=450, height=450) # Creates label widget
-	    window_content.grid(row=2, columnspan=20) # Place widget on grid
-	    text_displaying, pic_displaying = False, True # Refreshes state variables
+        window_content = tkinter.Label(win, image=picture, width=450, height=450) # Creates label widget
+        window_content.grid(row=2, columnspan=20) # Place widget on grid
+        text_displaying, pic_displaying = False, True # Refreshes state variables
     else:
-	    text_displaying, pic_displaying = False, False # refreshes state variables
+        text_displaying, pic_displaying = False, False # refreshes state variables
 
 def about():
-	"""Displays "about" dialog."""
-	tkinter.messagebox.showinfo("About","Molehill version %s\nBy Team HillsHaveEyes" % program_version)
+    """Displays "about" dialog."""
+    tkinter.messagebox.showinfo("About","Molehill version %s\nBy Team HillsHaveEyes" % program_version)
 
-def file_dialog():
-	"""Hides main window and starts file dialog."""
-	win.withdraw()
-	file_path = tkinter.filedialog.askopenfilename()
-	win.wm_deiconify()
-	return file_path
+def open_dialog():
+    """Opens dialog to open file."""
+    global text
+    win.withdraw()
+    file_path = tkinter.filedialog.askopenfilename(title = "Open File", filetypes = (("Text Files", "*.txt"), ("All Files", "*.*")))
+    win.wm_deiconify()
+    text = open(file_path, 'r').read() # opens file to read
 
-def open_dialog(): # NEEDS IMPLEMENTATION
-	"""Opens dialog to open file.
-	NOT IMPLEMENTED"""
-	tkinter.messagebox.showinfo("ERROR","Not implemented...")
-	file_path = file_dialog()
-
-def save_dialog(): # NEEDS IMPLEMENTATION
-	"""Opens dialog to save file.
-	NOT IMPLEMENTED"""
-	tkinter.messagebox.showinfo("ERROR","Not implemented...")
-	file_path = file_dialog()
+def save_dialog():
+    """Opens dialog to save file."""
+    global text
+    win.withdraw()
+    file_path = tkinter.filedialog.askopenfilename(title = "Save File", filetypes = (("Text Files", "*.txt"), ("All Files", "*.*")))
+    win.wm_deiconify()
+    with open(file_path, 'w') as file: # opens file to write
+        file.write(text)
 
 # creates a singular button on screen and places it at given coordinates
 btn0=tkinter.Button(win,text="Click Me", width=10,height=5,
-					command=set_layout1)
+                    command=set_layout1)
 btn0.place(relx=0.5,y=-10,rely=0.5,anchor='center')
 
 # creates menu bar and configures main window to use it
