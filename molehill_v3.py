@@ -8,14 +8,16 @@ import tkinter.filedialog
 from tkinter import ttk
 from tkinter import StringVar, filedialog
 from typing import Text
+from ScrollableNotebook import *
+
 
 #defines the window
-win = tk.Tk()
-win.title('Molehill V2')
-win.geometry('500x500')
+root = tk.Tk()
+root.title('Molehill V2')
+root.geometry('500x500')
 
 #defines the notebook widget
-tabControl = ttk.Notebook(win)
+tabControl=ScrollableNotebook(root,wheelscroll=True,tabmenu=True)
 tab = ttk.Frame(tabControl)
 
 #screen layout
@@ -84,4 +86,4 @@ btn0 = tk.Button(text = 'Start', width = 10, command = lambda:[filescan(), refre
 btn0.place(relx=0.5,rely=0.5,anchor='center')
 
 #spawns the window
-win.mainloop()
+root.mainloop()
