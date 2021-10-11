@@ -1,4 +1,3 @@
-#Sean's Version
 import os
 import tkinter as tk
 import tkinter.scrolledtext as st
@@ -7,6 +6,7 @@ import tkinter.filedialog
 from tkinter import ttk
 from tkinter import StringVar, filedialog
 from typing import Text
+import time
 
 #defines the window
 win = tk.Tk()
@@ -17,12 +17,12 @@ win.geometry('500x500')
 tabControl = ttk.Notebook(win)
 tab = ttk.Frame(tabControl)
 
-#start screen layout
-def layout0():
+#screen layout
+def tabLayout():
     #destroy the start button
     btn0.destroy()
-
-    #makes uploaded files a list
+    
+    #makes uploadedFiles a list
     orderedUploads = list(uploadedFiles)
 
     #extracts the name from elements in orderedUploads
@@ -38,9 +38,9 @@ def layout0():
         #organize the tabs
         tabControl.pack(expand = True, fill ="both")
 
-        #put scrolled text boxes onto the tab and center it
-        content = st.ScrolledText(tab, wrap = tk.WORD, width = 50, height = 25)
-        content.place(relx=0.5,rely=0.5,anchor='center')
+        #put a scrolled text box onto the tab and center it
+        content = st.ScrolledText(tab, wrap = tk.WORD, width = 100, height = 30)
+        content.pack(expand = True, fill = "both")
 
         #open the file and read it
         with open(name, 'r') as f:
@@ -54,15 +54,15 @@ def layout0():
 picture = tkinter.PhotoImage(file=r'constitution.png').subsample(5,5) 
 tabControl.add(tab, text = 'Picture')
 content = tkinter.Label(tab, image=picture, width=400, height=400)
-content.place(relx=0.5,rely=0.5,anchor='center')
+content.pack(expand = True, fill = "both")
 
 #initial start button
-btn0 = tk.Button(text = 'Start', width = 10, command = layout0)
+btn0 = tk.Button(text = 'Start', width = 10, command = tabLayout)
 btn0.place(relx=0.5,rely=0.5,anchor='center')
 
-#path = current directory
+#set path as current directory
 path = os.getcwd()
-#new set for uploadedFiles
+#set for uploadedFiles
 uploadedFiles = set()
 
 #while True:
@@ -71,6 +71,6 @@ for entry in os.scandir(path):
     #if the file is a txt file and its not the uploadedFiles set
     if entry.path.lower().endswith('.txt') and entry not in uploadedFiles:
         #adds the file to the set
-        print(entry)
         uploadedFiles.add(entry)
+        print(entry)
 win.mainloop()
