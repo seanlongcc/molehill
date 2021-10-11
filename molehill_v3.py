@@ -1,4 +1,6 @@
 import os
+import time
+import sys
 import tkinter as tk
 import tkinter.scrolledtext as st
 import tkinter.messagebox
@@ -6,7 +8,6 @@ import tkinter.filedialog
 from tkinter import ttk
 from tkinter import StringVar, filedialog
 from typing import Text
-import time
 
 #defines the window
 win = tk.Tk()
@@ -21,56 +22,66 @@ tab = ttk.Frame(tabControl)
 def tabLayout():
     #destroy the start button
     btn0.destroy()
-    
+
     #makes uploadedFiles a list
     orderedUploads = list(uploadedFiles)
-
-    #extracts the name from elements in orderedUploads
-    orderedUploads = [x.name for x in orderedUploads]
     #sort by alphabetical order
     orderedUploads.sort()
+
     #for each file in ordered uploads
     for name in orderedUploads:
-        #create a new tab
-        tab = ttk.Frame(tabControl)
-        #give tab the current file name
-        tabControl.add(tab, text = name)
-        #organize the tabs
-        tabControl.pack(expand = True, fill ="both")
+        #SOME KINDA IF STATEMENT HERE TO CHECK IF THE TAB ALREADY EXISTS
+        if name not in previousUploads:
+            previousUploads.add(name)
+            #create a new tab
+            tab = ttk.Frame(tabControl)
+            #give tab the current file name
+            tabControl.add(tab, text = name)
+            #organize the tabs
+            tabControl.pack(expand = True, fill ="both")
 
-        #put a scrolled text box onto the tab and center it
-        content = st.ScrolledText(tab, wrap = tk.WORD, width = 100, height = 30)
-        content.pack(expand = True, fill = "both")
+            #put a scrolled text box onto the tab and center it
+            content = st.ScrolledText(tab, wrap = tk.WORD)
+            content.pack(expand = True, fill = "both")
 
-        #open the file and read it
-        with open(name, 'r') as f:
-            #reads the data
-            data = f.read()
-            #inserts data into the content window
-            content.insert(tk.END, data)
+            #open the file and read it
+            with open(name, 'r') as f:
+                #reads the data
+                data = f.read()
+                #inserts data into the content window
+                content.insert(tk.END, data)
+
+#refresh button
+def refreshButton():
+    btnRefresh = tk.Button(text = 'Refresh', command = lambda:[filescan(), tabLayout()])
+    btnRefresh.pack()
 
 #lazy picture tab
 #Defines the image
 picture = tkinter.PhotoImage(file=r'constitution.png').subsample(5,5) 
 tabControl.add(tab, text = 'Picture')
-content = tkinter.Label(tab, image=picture, width=400, height=400)
+content = tkinter.Label(tab, image=picture)
 content.pack(expand = True, fill = "both")
 
-#initial start button
-btn0 = tk.Button(text = 'Start', width = 10, command = tabLayout)
-btn0.place(relx=0.5,rely=0.5,anchor='center')
-
-#set path as current directory
-path = os.getcwd()
 #set for uploadedFiles
 uploadedFiles = set()
+#set for previous uploads to compare to
+previousUploads = set()
 
-#while True:
-#iterate through the files in the current directory
-for entry in os.scandir(path): 
-    #if the file is a txt file and its not the uploadedFiles set
-    if entry.path.lower().endswith('.txt') and entry not in uploadedFiles:
-        #adds the file to the set
-        uploadedFiles.add(entry)
-        print(entry)
+#scans the current directory
+def filescan():
+    #set path as current directory
+    path = os.getcwd()
+    #iterate through each file in the directory
+    for entry in os.scandir(path): 
+        #if the file is a txt file and its not the uploadedFiles set
+        if entry.path.lower().endswith('.txt') and entry not in uploadedFiles:
+            #adds the file to the set
+            uploadedFiles.add(entry.name)
+
+#initial start button
+btn0 = tk.Button(text = 'Start', width = 10, command = lambda:[filescan(), refreshButton(), tabLayout()])
+btn0.place(relx=0.5,rely=0.5,anchor='center')
+
+#spawns the window
 win.mainloop()
