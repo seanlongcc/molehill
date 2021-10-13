@@ -1,5 +1,5 @@
 #Week 10/04/2021
-#Task:
+#Task: Retired
 #Create a python script that opens a window that has a start button on it. 
 #When you click the start button, a picture and text will pop up. 
 
