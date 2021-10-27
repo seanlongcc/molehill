@@ -10,60 +10,76 @@ from tkinter import StringVar, filedialog
 from typing import Text
 from ScrollableNotebook import *
 
-
 #defines the window
 root = tk.Tk()
-root.title('Molehill V2')
-root.geometry('500x500')
+root.title('Molehill V3')
+root.geometry('1280x720')
 
 #defines the notebook widget
-tabControl=ScrollableNotebook(root,wheelscroll=True,tabmenu=True)
+tabControl=ScrollableNotebook(root, wheelscroll=True, tabmenu=True)
 tab = ttk.Frame(tabControl)
 
 #screen layout
 def tabLayout():
     #destroy the start button
     btn0.destroy()
-
     #makes uploadedFiles a list
     orderedUploads = list(uploadedFiles)
     #sort by alphabetical order
-    orderedUploads.sort()
+    orderedUploads.sort(key = lambda x: x.lower())
 
     #for each file in ordered uploads
     for name in orderedUploads:
-        #SOME KINDA IF STATEMENT HERE TO CHECK IF THE TAB ALREADY EXISTS
-        if name not in previousUploads:
-            previousUploads.add(name)
-            #create a new tab
-            tab = ttk.Frame(tabControl)
-            #give tab the current file name
-            tabControl.add(tab, text = name)
-            #organize the tabs
-            tabControl.pack(expand = True, fill ="both")
+        #if text file
+        if name.lower().endswith('.txt'):
+            #if tab doesnt exist
+            if name not in previousUploads:
+                #add name to used list
+                previousUploads.add(name)
+                #create a new tab
+                tab = ttk.Frame(tabControl)
+                #give tab the current file name
+                tabControl.add(tab, text = name)
+                #organize the tabs
+                tabControl.pack(expand = True, fill ="both")
 
-            #put a scrolled text box onto the tab and center it
-            content = st.ScrolledText(tab, wrap = tk.WORD)
-            content.pack(expand = True, fill = "both")
+                #put a scrolled text box onto the tab and have it fill the area
+                content = st.ScrolledText(tab, wrap = tk.WORD)
+                content.pack(expand = True, fill = "both")
 
-            #open the file and read it
-            with open(name, 'r') as f:
-                #reads the data
-                data = f.read()
-                #inserts data into the content window
-                content.insert(tk.END, data)
+                #open the file and read it
+                with open(name, 'r') as f:
+                    #reads the data
+                    data = f.read()
+                    #inserts data into the content window
+                    content.insert(tk.END, data)
+
+        #if picture
+        elif name.lower().endswith(('.png','.jpg')):
+            #if tab doesnt exist
+            if name not in previousUploads:
+                #add name to used list
+                previousUploads.add(name)
+                #create a new tab
+                tab = ttk.Frame(tabControl)
+                #give tab current file name
+                tabControl.add(tab, text = name)
+                #organize the tabs
+                tabControl.pack(expand = True, fill ="both")
+                
+                #set the picture
+                pic = tkinter.PhotoImage(file=name).subsample(3,3)
+                #set the label to display the picture
+                content = tkinter.Label(tab, image=pic)
+                #keep a reference to the tkinter object so that the picture shows: "Why do my Tkinter images not appear?"
+                content.image = pic
+                #place the image
+                content.pack(expand = True, fill = "both")                
 
 #refresh button
 def refreshButton():
     btnRefresh = tk.Button(text = 'Refresh', command = lambda:[filescan(), tabLayout()])
     btnRefresh.pack()
-
-#lazy picture tab
-#Defines the image
-picture = tkinter.PhotoImage(file=r'constitution.png').subsample(5,5) 
-tabControl.add(tab, text = 'Picture')
-content = tkinter.Label(tab, image=picture)
-content.pack(expand = True, fill = "both")
 
 #set for uploadedFiles
 uploadedFiles = set()
@@ -77,7 +93,7 @@ def filescan():
     #iterate through each file in the directory
     for entry in os.scandir(path): 
         #if the file is a txt file and its not the uploadedFiles set
-        if entry.path.lower().endswith('.txt') and entry not in uploadedFiles:
+        if entry.path.lower().endswith(('.txt', '.png', '.jpg')) and entry not in uploadedFiles:
             #adds the file to the set
             uploadedFiles.add(entry.name)
 
