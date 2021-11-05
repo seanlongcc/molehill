@@ -9,6 +9,10 @@ from tkinter import ttk
 from tkinter import StringVar, filedialog
 from typing import Text
 from ScrollableNotebook import *
+import threading
+import logging
+from watchdog.observers import Observer
+from watchdog.events import LoggingEventHandler
 
 #defines the window
 root = tk.Tk()
@@ -17,7 +21,6 @@ root.geometry('1280x720')
 
 #defines the notebook widget
 tabControl=ScrollableNotebook(root, wheelscroll=True, tabmenu=True)
-tab = ttk.Frame(tabControl)
 
 #screen layout
 def tabLayout():
@@ -32,7 +35,7 @@ def tabLayout():
     for name in orderedUploads:
         #if text file
         if name.lower().endswith('.txt'):
-            #if tab doesnt exist
+            #if tab doesnt exist, compares with previousUploads
             if name not in previousUploads:
                 #add name to used list
                 previousUploads.add(name)
@@ -55,8 +58,8 @@ def tabLayout():
                     content.insert(tk.END, data)
 
         #if picture
-        elif name.lower().endswith(('.png','.jpg')):
-            #if tab doesnt exist
+        elif name.lower().endswith(('.png')):
+            #if tab doesnt exist, compares with previousUploads
             if name not in previousUploads:
                 #add name to used list
                 previousUploads.add(name)
@@ -92,8 +95,8 @@ def filescan():
     path = os.getcwd()
     #iterate through each file in the directory
     for entry in os.scandir(path): 
-        #if the file is a txt file and its not the uploadedFiles set
-        if entry.path.lower().endswith(('.txt', '.png', '.jpg')) and entry not in uploadedFiles:
+        #if the file is a .txt or .png
+        if entry.path.lower().endswith(('.txt', '.png')):
             #adds the file to the set
             uploadedFiles.add(entry.name)
 
