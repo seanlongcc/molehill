@@ -13,6 +13,7 @@ import threading
 import logging
 from watchdog.observers import Observer
 from watchdog.events import LoggingEventHandler
+from PIL import Image, ImageTk
 
 #defines the window
 root = tk.Tk()
@@ -38,7 +39,7 @@ def tabLayout():
     #for each file in ordered uploads
     for name in orderedUploads:
         #if txt file
-        if name.lower().endswith('.txt') or name.lower().endswith('.png'):
+        if name.lower().endswith(('.txt', '.png', '.jpg', 'jpeg')):
             if name not in previousUploads:
                 #add name to used list
                 previousUploads.add(name)
@@ -62,12 +63,17 @@ def tabLayout():
 
                 #image
                 else: 
+                    #open the picture to resize
+                    img = Image.open(name)
+                    #resize the image
+                    imgrs = img.resize((img.width // 3, img.height // 3),Image.ANTIALIAS)
                     #set the picture
-                    pic = tkinter.PhotoImage(file=name).subsample(3,3)
+                    pic = ImageTk.PhotoImage(imgrs)
                     #set the label to display the picture
                     content = tkinter.Label(tab, image=pic)
                     #keep a reference to the tkinter object so that the picture shows: "Why do my Tkinter images not appear?"
                     content.image = pic
+                    #place the image
                     content.pack(expand = True, fill = "both")             
 
 #set for uploadedFiles
@@ -83,7 +89,7 @@ def fileUpdate():
     #iterate through each file in the directory
     for entry in os.scandir(path): 
         #if the file is a .txt or .png, dont need to check for repeats since its a set
-        if entry.path.lower().endswith(('.txt', '.png')):
+        if entry.path.lower().endswith(('.txt', '.png', '.jpg', 'jpeg')):
             #adds the file to the set
             uploadedFiles.add(entry.name)
 
