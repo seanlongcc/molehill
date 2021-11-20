@@ -1,4 +1,5 @@
 import os
+import os.path
 import time
 import sys
 import tkinter as tk
@@ -14,6 +15,9 @@ import logging
 from watchdog.observers import Observer
 from watchdog.events import LoggingEventHandler
 from PIL import Image, ImageTk
+from pandastable import Table, TableModel
+import sqlite3
+import pandas as pd
 
 #defines the window
 root = tk.Tk()
@@ -39,7 +43,7 @@ def tabLayout():
     #for each file in ordered uploads
     for name in orderedUploads:
         #if txt file
-        if name.lower().endswith(('.txt', '.png', '.jpg', 'jpeg')):
+        if name.lower().endswith(('.txt', '.png', '.jpg', 'jpeg', '.db')):
             if name not in previousUploads:
                 #add name to used list
                 previousUploads.add(name)
@@ -61,6 +65,14 @@ def tabLayout():
                         #inserts data into the content window
                         content.insert(tk.END, data)
 
+                #databases
+                elif name.lower().endswith('.db'):
+                    #convert db to csv
+                    filepath = db_to_csv(name)
+
+                    #display the csv
+                    csvDisplay(filepath, tab)
+
                 #image
                 else: 
                     #open the picture to resize
@@ -74,7 +86,37 @@ def tabLayout():
                     #keep a reference to the tkinter object so that the picture shows: "Why do my Tkinter images not appear?"
                     content.image = pic
                     #place the image
-                    content.pack(expand = True, fill = "both")             
+                    content.pack(expand = True, fill = "both")
+
+#convert db to csv, tableName needs to be hardcoded
+def db_to_csv(name, tableName = "notes"):
+    #set the directory of the file to our current directory
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.join(BASE_DIR, name)
+
+    #connect with the database
+    con = sqlite3.connect(db_path)
+
+    #read the database file
+    df = pd.read_sql_query("SELECT * FROM {}".format(tableName), con)
+
+    #convert db to csv, is not a string
+    df.to_csv(r'{}.csv'.format(name[:-3]), index = False)
+
+    #set filepath name
+    filepath = name[:-3] + ".csv"
+    return filepath
+
+#display the csv
+def csvDisplay(filepath, tab):
+    #sets the table
+    table = Table(tab, showstatusbar=True, showtoolbar=True)
+
+    #open the csv file
+    table.importCSV(filepath)
+
+    #show the csv file on the table
+    table.show()
 
 #set for uploadedFiles
 uploadedFiles = set()
@@ -89,7 +131,9 @@ def fileUpdate():
     #iterate through each file in the directory
     for entry in os.scandir(path): 
         #if the file is a .txt or .png, dont need to check for repeats since its a set
-        if entry.path.lower().endswith(('.txt', '.png', '.jpg', 'jpeg')):
+        if entry.path.lower().endswith(('.txt', '.png', '.jpg', 'jpeg', '.db')):
+            #sleep timer for databases to load and convert
+            time.sleep(.001)
             #adds the file to the set
             uploadedFiles.add(entry.name)
 
