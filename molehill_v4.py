@@ -21,7 +21,7 @@ import pandas as pd
 
 #defines the window
 root = tk.Tk()
-root.title('Molehill V3')
+root.title('Molehill V4')
 root.geometry('1280x720')
 
 #defines the notebook widget
@@ -35,11 +35,7 @@ def tabLayout():
     orderedUploads = list(uploadedFiles)
     #sort by alphabetical order
     orderedUploads.sort(key = lambda x: x.lower())
-
-    '''for future if we want to delete tabs, works if no previousUploads() set.
-    for tab in tabControl.notebookTab.tabs():
-       tabControl.forget(tab)
-    '''
+    
     #for each file in ordered uploads
     for name in orderedUploads:
         #if txt file
@@ -68,7 +64,10 @@ def tabLayout():
                 #databases
                 elif name.lower().endswith('.db'):
                     #convert db to csv
-                    filepath = db_to_csv(name)
+                    try:
+                        filepath = db_to_csv(name)
+                    except:
+                        filepath = db_to_csv2(name)
 
                     #display the csv
                     csvDisplay(filepath, tab)
@@ -89,7 +88,25 @@ def tabLayout():
                     content.pack(expand = True, fill = "both")
 
 #convert db to csv, tableName needs to be hardcoded
-def db_to_csv(name, tableName = "notes"):
+def db_to_csv(name, tableName = "messages"):
+    #set the directory of the file to our current directory
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.join(BASE_DIR, name)
+
+    #connect with the database
+    con = sqlite3.connect(db_path)
+
+    #read the database file
+    df = pd.read_sql_query("SELECT * FROM {}".format(tableName), con)
+
+    #convert db to csv, is not a string
+    df.to_csv(r'{}.csv'.format(name[:-3]), index = False)
+
+    #set filepath name
+    filepath = name[:-3] + ".csv"
+    return filepath
+
+def db_to_csv2(name, tableName = "wa_contacts"):
     #set the directory of the file to our current directory
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     db_path = os.path.join(BASE_DIR, name)
@@ -133,7 +150,7 @@ def fileUpdate():
         #if the file is a .txt or .png, dont need to check for repeats since its a set
         if entry.path.lower().endswith(('.txt', '.png', '.jpg', 'jpeg', '.db')):
             #sleep timer for databases to load and convert
-            time.sleep(.001)
+            time.sleep(.01)
             #adds the file to the set
             uploadedFiles.add(entry.name)
 
