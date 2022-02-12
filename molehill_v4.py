@@ -25,7 +25,7 @@ root.title('Molehill V4')
 root.geometry('1280x720')
 
 #defines the notebook widget
-tabControl=ScrollableNotebook(root, wheelscroll=True, tabmenu=True)
+tabControl = ScrollableNotebook(root, wheelscroll=True, tabmenu=True)
 
 #screen layout
 def tabLayout():
@@ -148,6 +148,7 @@ def db_to_csv2(name, tableName = "wa_contacts"):
     filepath = name[:-3] + ".csv"
     return filepath
 
+#creates the id_and_name database file
 def idName(name, tableName = "id_and_name"):
     #set the directory of the file to our current directory
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -187,6 +188,7 @@ def idName(name, tableName = "id_and_name"):
     filepath = name[:-3] + ".csv"
     return filepath
 
+#display the correlation table of id_and_name
 def display_idName(name, tableName = "id_and_name"):
     #set the directory of the file to our current directory
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
