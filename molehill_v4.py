@@ -82,10 +82,10 @@ def tabLayout():
                                     try:
                                         filepath = db_to_csv_VM(name)
                                     except:
-                                        try:
+                                        try: #telegram
                                             filepath = db_to_csv_TEL(name)(name)
                                         except:
-                                            try:
+                                            try: #fb messenger
                                                 filepath = db_to_csv_FBS(name)
                                             except:
                                                 try:
