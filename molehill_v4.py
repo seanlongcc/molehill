@@ -27,6 +27,8 @@ root.geometry('1280x720')
 #defines the notebook widget
 tabControl = ScrollableNotebook(root, wheelscroll=True, tabmenu=True)
 
+extentionless = ["viber_data"]
+
 #screen layout
 def tabLayout():
     #destroy the start button
@@ -61,19 +63,24 @@ def tabLayout():
                         #inserts data into the content window
                         content.insert(tk.END, data)
 
-                #databases
+                #databases. how this works is that each database file is tried until a match is found.
                 elif name.lower().endswith('.db'):
+                    print(name)
                     #convert db to csv
                     try:
-                        filepath = db_to_csv(name)
+                        filepath = db_to_csv_MSG(name)
                     except:
                         try:
-                            filepath = db_to_csv2(name)
+                            filepath = db_to_csv_WA(name)
                         except:
                             try:
-                                filepath = display_idName(name)
+                                filepath = db_to_csv_CON(name)
                             except:
-                                print("database function does not exist")
+                                try:
+                                    filepath = db_to_csv_VD(name)
+                                    print("hello")
+                                except:
+                                    print("database function does not exist")
 
                     #display the csv
                     csvDisplay(filepath, tab)
@@ -94,34 +101,16 @@ def tabLayout():
                     content.pack(expand = True, fill = "both")
 
 #convert db to csv, tableName needs to be hardcoded
-def db_to_csv(name, tableName = "messages"):
+def db_to_csv_MSG(name, tableName = "messages"):
     #set the directory of the file to our current directory
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     db_path = os.path.join(BASE_DIR, name)
 
     #connect with the database
     con = sqlite3.connect(db_path)
-    con_wa = sqlite3.connect(os.path.join(BASE_DIR, "wa.db"))
 
     #read the database file
     df = pd.read_sql_query("SELECT _id, key_remote_jid, key_from_me, data, timestamp, media_url, media_mime_type, media_size, received_timestamp, receipt_server_timestamp FROM {}".format(tableName), con)
-
-    #read database file of wa to get contacts
-    df_wa = pd.read_sql_query("SELECT jid, number, display_name FROM wa_contacts", con_wa)
-
-    wa_dict = {}
-    #dictionary of contacts in wa, maps jid to display name
-    for i in range(len(df_wa)):
-       wa_dict[df_wa.iloc[i]["jid"]] = df_wa.iloc[i]["display_name"]
-
-    match = []
-    #corresponds mgstore and wa, maps phone number, and display name
-    for i in range(1, len(df)):
-        if df.iloc[i]["key_from_me"] == 0:
-            match.append([wa_dict[df.iloc[i]["key_remote_jid"]], df.iloc[i]["data"]])
-        else:
-            match.append(["FROM ME", df.iloc[i]["data"]])
-    print(match)
 
     #convert db to csv, is not a string
     df.to_csv(r'{}.csv'.format(name[:-3]), index = False)
@@ -130,7 +119,7 @@ def db_to_csv(name, tableName = "messages"):
     filepath = name[:-3] + ".csv"
     return filepath
 
-def db_to_csv2(name, tableName = "wa_contacts"):
+def db_to_csv_WA(name, tableName = "wa_contacts"):
     #set the directory of the file to our current directory
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     db_path = os.path.join(BASE_DIR, name)
@@ -148,38 +137,16 @@ def db_to_csv2(name, tableName = "wa_contacts"):
     filepath = name[:-3] + ".csv"
     return filepath
 
-#creates the id_and_name database file
-def idName(name, tableName = "id_and_name"):
+def db_to_csv_CON(name, tableName = "accounts"):
     #set the directory of the file to our current directory
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     db_path = os.path.join(BASE_DIR, name)
 
     #connect with the database
     con = sqlite3.connect(db_path)
-    con_wa = sqlite3.connect(os.path.join(BASE_DIR, "wa.db"))
-    conID = sqlite3.connect('id_and_name.db')
 
     #read the database file
     df = pd.read_sql_query("SELECT * FROM {}".format(tableName), con)
-
-    #read database file of wa to get contacts
-    df_wa = pd.read_sql_query("SELECT jid, display_name FROM wa_contacts", con_wa)
-
-    #make cursors for each database
-    cur = conID.cursor()
-    curWA = con_wa.cursor()
-
-    #get the data from wa_contacts and puts into rows
-    curWA.execute("SELECT jid, display_name FROM wa_contacts")
-    rows = curWA.fetchall()
-
-    #put data from rows into id_and_name
-    sql_statement = 'INSERT INTO id_and_name VALUES (?, ?)'
-    cur.executemany(sql_statement, rows)
-    
-    #commit and close the db
-    conID.commit()
-    conID.close()
 
     #convert db to csv, is not a string
     df.to_csv(r'{}.csv'.format(name[:-3]), index = False)
@@ -188,8 +155,7 @@ def idName(name, tableName = "id_and_name"):
     filepath = name[:-3] + ".csv"
     return filepath
 
-#display the correlation table of id_and_name
-def display_idName(name, tableName = "id_and_name"):
+def db_to_csv_VD(name, tableName = "phonebookcontact"):
     #set the directory of the file to our current directory
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     db_path = os.path.join(BASE_DIR, name)
@@ -218,20 +184,12 @@ def csvDisplay(filepath, tab):
     #show the csv file on the table
     table.show()
 
-#create new database for ID and Name
-con = sqlite3.connect('id_and_name.db')
-cur = con.cursor()
-
-cur.execute('''CREATE TABLE IF NOT EXISTS id_and_name (ID, Name)''')
-idName('id_and_name.db')
-#cur.execute("INSERT INTO id_and_name VALUES (100,100)")
-con.commit()
-con.close()
-
 #set for uploadedFiles
 uploadedFiles = set()
 #set for previous uploads to compare to
 previousUploads = set()
+
+noExtension = ["viber_data, viber_messages"]
 
 #scans the current directory for 
 def fileUpdate():
@@ -246,6 +204,7 @@ def fileUpdate():
             time.sleep(.01)
             #adds the file to the set
             uploadedFiles.add(entry.name)
+
 
 #what fileWatch calls to update the tabs
 class Event(LoggingEventHandler):
