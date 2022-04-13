@@ -28,7 +28,7 @@ root.geometry('1280x720')
 tabControl = ScrollableNotebook(root, wheelscroll=True, tabmenu=True)
 
 #hardcoded list of databases with no extensions
-noExtension = ['viber_data', 'viber_messages', 'search_cache_db', 'threads_db2']
+noExtension = ('viber_data', 'viber_messages', 'search_cache_db', 'threads_db2')
 
 #screen layout
 def tabLayout():
@@ -279,10 +279,11 @@ def fileUpdate():
 
     #iterate through each file in the directory
     for entry in os.scandir(path): 
-        #sleep timer for databases to load and convert
-        time.sleep(.01)
-        #adds the file to the set
-        uploadedFiles.add(entry.name)  
+        if entry.path.lower().endswith(('.txt', '.png', '.jpg', 'jpeg', '.db') + noExtension):
+            #sleep timer for databases to load and convert
+            time.sleep(.01)
+            #adds the file to the set
+            uploadedFiles.add(entry.name)  
 
 #what fileWatch calls to update the tabs
 class Event(LoggingEventHandler):
