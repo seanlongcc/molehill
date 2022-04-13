@@ -27,7 +27,7 @@ root.geometry('1280x720')
 #defines the notebook widget
 tabControl = ScrollableNotebook(root, wheelscroll=True, tabmenu=True)
 
-extentionless = ["viber_data"]
+noExtension = ['viber_data', 'viber_messages', 'search_cache_db', 'threads_db2']
 
 #screen layout
 def tabLayout():
@@ -41,7 +41,7 @@ def tabLayout():
     #for each file in ordered uploads
     for name in orderedUploads:
         #if txt file
-        if name.lower().endswith(('.txt', '.png', '.jpg', 'jpeg', '.db')):
+        if name.lower().endswith(('.txt', '.png', '.jpg', 'jpeg', '.db')) or name in noExtension:
             if name not in previousUploads:
                 #add name to used list
                 previousUploads.add(name)
@@ -63,9 +63,8 @@ def tabLayout():
                         #inserts data into the content window
                         content.insert(tk.END, data)
 
-                #databases. how this works is that each database file is tried until a match is found.
-                elif name.lower().endswith('.db'):
-                    print(name)
+                #databases. each database file is tried until a match is found.
+                elif name.lower().endswith('.db') or name in noExtension:
                     #convert db to csv
                     try:
                         filepath = db_to_csv_MSG(name)
@@ -80,8 +79,19 @@ def tabLayout():
                                     filepath = db_to_csv_VD(name)
                                     print("hello")
                                 except:
-                                    print("database function does not exist")
-
+                                    try:
+                                        filepath = db_to_csv_TEL(name)
+                                    except:
+                                        try:
+                                            filepath = db_to_csv_VM(name)
+                                        except:
+                                            try:
+                                                filepath = db_to_csv_FBS(name)
+                                            except:
+                                                try:
+                                                    filepath = db_to_csv_FBT(name)
+                                                except:
+                                                    print("database function does not exist")
                     #display the csv
                     csvDisplay(filepath, tab)
 
@@ -173,6 +183,78 @@ def db_to_csv_VD(name, tableName = "phonebookcontact"):
     filepath = name[:-3] + ".csv"
     return filepath
 
+def db_to_csv_VM(name, tableName = "messages"):
+    #set the directory of the file to our current directory
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.join(BASE_DIR, name)
+
+    #connect with the database
+    con = sqlite3.connect(db_path)
+
+    #read the database file
+    df = pd.read_sql_query("SELECT * FROM {}".format(tableName), con)
+
+    #convert db to csv, is not a string
+    df.to_csv(r'{}.csv'.format(name[:-3]), index = False)
+
+    #set filepath name
+    filepath = name[:-3] + ".csv"
+    return filepath
+    
+def db_to_csv_TEL(name, tableName = "messages_v2"):
+    #set the directory of the file to our current directory
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.join(BASE_DIR, name)
+
+    #connect with the database
+    con = sqlite3.connect(db_path)
+
+    #read the database file
+    df = pd.read_sql_query("SELECT * FROM {}".format(tableName), con)
+
+    #convert db to csv, is not a string
+    df.to_csv(r'{}.csv'.format(name[:-3]), index = False)
+
+    #set filepath name
+    filepath = name[:-3] + ".csv"
+    return filepath
+
+def db_to_csv_FBS(name, tableName = "messages_v2"):
+    #set the directory of the file to our current directory
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.join(BASE_DIR, name)
+
+    #connect with the database
+    con = sqlite3.connect(db_path)
+
+    #read the database file
+    df = pd.read_sql_query("SELECT * FROM {}".format(tableName), con)
+
+    #convert db to csv, is not a string
+    df.to_csv(r'{}.csv'.format(name[:-3]), index = False)
+
+    #set filepath name
+    filepath = name[:-3] + ".csv"
+    return filepath
+
+def db_to_csv_FBT(name, tableName = "messages_v2"):
+    #set the directory of the file to our current directory
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.join(BASE_DIR, name)
+
+    #connect with the database
+    con = sqlite3.connect(db_path)
+
+    #read the database file
+    df = pd.read_sql_query("SELECT * FROM {}".format(tableName), con)
+
+    #convert db to csv, is not a string
+    df.to_csv(r'{}.csv'.format(name[:-3]), index = False)
+
+    #set filepath name
+    filepath = name[:-3] + ".csv"
+    return filepath
+
 #display the csv
 def csvDisplay(filepath, tab):
     #sets the table
@@ -189,8 +271,6 @@ uploadedFiles = set()
 #set for previous uploads to compare to
 previousUploads = set()
 
-noExtension = ["viber_data, viber_messages"]
-
 #scans the current directory for 
 def fileUpdate():
     #set path as current directory
@@ -198,13 +278,10 @@ def fileUpdate():
 
     #iterate through each file in the directory
     for entry in os.scandir(path): 
-        #if the file is a .txt or .png, dont need to check for repeats since its a set
-        if entry.path.lower().endswith(('.txt', '.png', '.jpg', 'jpeg', '.db')):
-            #sleep timer for databases to load and convert
-            time.sleep(.01)
-            #adds the file to the set
-            uploadedFiles.add(entry.name)
-
+        #sleep timer for databases to load and convert
+        time.sleep(.01)
+        #adds the file to the set
+        uploadedFiles.add(entry.name)  
 
 #what fileWatch calls to update the tabs
 class Event(LoggingEventHandler):
