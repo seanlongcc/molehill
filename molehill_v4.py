@@ -27,7 +27,7 @@ root.geometry('1280x720')
 #defines the notebook widget
 tabControl = ScrollableNotebook(root, wheelscroll=True, tabmenu=True)
 
-extentionless = ["viber_data", "viber_messages"]
+extentionless = ("viber_data", "viber_messages")
 
 #screen layout
 def tabLayout():
@@ -197,10 +197,12 @@ def fileUpdate():
     #iterate through each file in the directory
     for entry in os.scandir(path): 
         #if the file is a .txt or .png, dont need to check for repeats since its a set
-        #sleep timer for databases to load and convert
-        time.sleep(.01)
-        #adds the file to the set
-        uploadedFiles.add(entry.name)
+        if entry.path.lower().endswith(('.txt', '.png', '.jpg', 'jpeg', '.db')) or \
+                entry.path.lower().endswith(extentionless):
+            #sleep timer for databases to load and convert
+            time.sleep(.01)
+            #adds the file to the set
+            uploadedFiles.add(entry.name)
 
 
 #what fileWatch calls to update the tabs
