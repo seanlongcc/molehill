@@ -27,7 +27,11 @@ root.geometry('1280x720')
 #defines the notebook widget
 tabControl = ScrollableNotebook(root, wheelscroll=True, tabmenu=True)
 
+<<<<<<< HEAD
 extentionless = ("viber_data", "viber_messages")
+=======
+extentionless = ["viber_data"]
+>>>>>>> parent of 5ee0a4a (now reads extensionless files as specified)
 
 #screen layout
 def tabLayout():
@@ -41,7 +45,7 @@ def tabLayout():
     #for each file in ordered uploads
     for name in orderedUploads:
         #if txt file
-        if name.lower().endswith(('.txt', '.png', '.jpg', 'jpeg', '.db')) or name in extentionless:
+        if name.lower().endswith(('.txt', '.png', '.jpg', 'jpeg', '.db')):
             if name not in previousUploads:
                 #add name to used list
                 previousUploads.add(name)
@@ -64,7 +68,7 @@ def tabLayout():
                         content.insert(tk.END, data)
 
                 #databases. how this works is that each database file is tried until a match is found.
-                elif name.lower().endswith('.db') or name in extentionless:
+                elif name.lower().endswith('.db'):
                     print(name)
                     #convert db to csv
                     try:
@@ -189,6 +193,8 @@ uploadedFiles = set()
 #set for previous uploads to compare to
 previousUploads = set()
 
+noExtension = ["viber_data, viber_messages"]
+
 #scans the current directory for 
 def fileUpdate():
     #set path as current directory
@@ -197,8 +203,12 @@ def fileUpdate():
     #iterate through each file in the directory
     for entry in os.scandir(path): 
         #if the file is a .txt or .png, dont need to check for repeats since its a set
+<<<<<<< HEAD
         if entry.path.lower().endswith(('.txt', '.png', '.jpg', 'jpeg', '.db')) or \
                 entry.path.lower().endswith(extentionless):
+=======
+        if entry.path.lower().endswith(('.txt', '.png', '.jpg', 'jpeg', '.db')):
+>>>>>>> parent of 5ee0a4a (now reads extensionless files as specified)
             #sleep timer for databases to load and convert
             time.sleep(.01)
             #adds the file to the set
