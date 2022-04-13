@@ -53,7 +53,7 @@ def tabLayout():
                 tabControl.pack(expand = True, fill ="both")
 
                 #text files
-                if name.lower().endswith('.txt'):
+                if name.lower().endswith('.txt') and name.lower() == "requirements.txt":
                     #put a scrolled text box onto the tab and have it fill the area
                     content = st.ScrolledText(tab, wrap = tk.WORD)
                     content.pack(expand = True, fill = "both")
