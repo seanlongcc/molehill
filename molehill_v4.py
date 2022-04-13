@@ -29,6 +29,7 @@ tabControl = ScrollableNotebook(root, wheelscroll=True, tabmenu=True)
 
 #hardcoded list of databases with no extensions
 noExtension = ('viber_data', 'viber_messages', 'search_cache_db', 'threads_db2')
+excluded = ("requirements.txt")
 
 #screen layout
 def tabLayout():
@@ -42,7 +43,7 @@ def tabLayout():
     #for each file in ordered uploads
     for name in orderedUploads:
         #if txt file
-        if name.lower().endswith(('.txt', '.png', '.jpg', 'jpeg', '.db')) or name in noExtension:
+        if (name not in excluded) and (name.lower().endswith(('.txt', '.png', '.jpg', 'jpeg', '.db')) or name in noExtension):
             if name not in previousUploads:
                 #add name to used list
                 previousUploads.add(name)
@@ -53,7 +54,7 @@ def tabLayout():
                 tabControl.pack(expand = True, fill ="both")
 
                 #text files
-                if name.lower().endswith('.txt') and name.lower() != "requirements.txt":
+                if name.lower().endswith('.txt'):
                     #put a scrolled text box onto the tab and have it fill the area
                     content = st.ScrolledText(tab, wrap = tk.WORD)
                     content.pack(expand = True, fill = "both")
