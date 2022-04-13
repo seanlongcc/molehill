@@ -1,0 +1,15 @@
+# ignore 
+*.log
+*.txt
+*.png
+*.jpg
+*.jpeg
+*.db
+*.csv
+*.backup
+*.json
+
+viber_data
+viber_messages
+search_cache_db
+threads_db2
