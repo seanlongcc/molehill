@@ -8,6 +8,7 @@
 *.csv
 *.backup
 *.json
+*.sqlite
 
 viber_data
 viber_messages
