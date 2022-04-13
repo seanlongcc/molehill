@@ -27,6 +27,7 @@ root.geometry('1280x720')
 #defines the notebook widget
 tabControl = ScrollableNotebook(root, wheelscroll=True, tabmenu=True)
 
+#hardcoded list of databases with no extensions
 noExtension = ['viber_data', 'viber_messages', 'search_cache_db', 'threads_db2']
 
 #screen layout
@@ -66,24 +67,23 @@ def tabLayout():
                 #databases. each database file is tried until a match is found.
                 elif name.lower().endswith('.db') or name in noExtension:
                     #convert db to csv
-                    try:
+                    try: #whatsapp
                         filepath = db_to_csv_MSG(name)
                     except:
                         try:
                             filepath = db_to_csv_WA(name)
                         except:
-                            try:
+                            try: #contacts
                                 filepath = db_to_csv_CON(name)
                             except:
-                                try:
+                                try: #viber
                                     filepath = db_to_csv_VD(name)
-                                    print("hello")
                                 except:
                                     try:
-                                        filepath = db_to_csv_TEL(name)
+                                        filepath = db_to_csv_VM(name)
                                     except:
                                         try:
-                                            filepath = db_to_csv_VM(name)
+                                            filepath = db_to_csv_TEL(name)(name)
                                         except:
                                             try:
                                                 filepath = db_to_csv_FBS(name)
