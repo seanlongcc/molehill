@@ -27,6 +27,7 @@ root.geometry('1280x720')
 #defines the notebook widget
 tabControl = ScrollableNotebook(root, wheelscroll=True, tabmenu=True)
 
+#hardcoded list of databases with no extensions
 noExtension = ['viber_data', 'viber_messages', 'search_cache_db', 'threads_db2']
 
 #screen layout
