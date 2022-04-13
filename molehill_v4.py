@@ -28,8 +28,8 @@ root.geometry('1280x720')
 tabControl = ScrollableNotebook(root, wheelscroll=True, tabmenu=True)
 
 #hardcoded list of databases with no extensions
-noExtension = ('viber_data', 'viber_messages', 'search_cache_db', 'threads_db2')
-excluded = ("requirements.txt")
+noExtension = ('viber_data', 'viber_messages', 'search_cache_db', 'threads_db2', 'database.sqlite')
+excluded = ('requirements.txt')
 
 #screen layout
 def tabLayout():
@@ -92,7 +92,10 @@ def tabLayout():
                                                 try:
                                                     filepath = db_to_csv_FBT(name)
                                                 except:
-                                                    print("database function does not exist")
+                                                    try:
+                                                        filepath = db_to_csv_SIG(name)
+                                                    except:
+                                                        print("database function does not exist")
                     #display the csv
                     csvDisplay(filepath, tab)
 
@@ -256,6 +259,24 @@ def db_to_csv_FBT(name, tableName = "messages_v2"):
     filepath = name[:-3] + ".csv"
     return filepath
 
+def db_to_csv_SIG(name, tableName = "mms"):
+    #set the directory of the file to our current directory
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.join(BASE_DIR, name)
+
+    #connect with the database
+    con = sqlite3.connect(db_path)
+
+    #read the database file
+    df = pd.read_sql_query("SELECT * FROM {}".format(tableName), con)
+
+    #convert db to csv, is not a string
+    df.to_csv(r'{}.csv'.format(name[:-3]), index = False)
+
+    #set filepath name
+    filepath = name[:-3] + ".csv"
+    return filepath
+
 #display the csv
 def csvDisplay(filepath, tab):
     #sets the table
@@ -276,6 +297,7 @@ previousUploads = set()
 def fileUpdate():
     #set path as current directory
     path = os.getcwd()
+    #os.chdir('./ScriptFiles')
 
     #iterate through each file in the directory
     for entry in os.scandir(path): 
