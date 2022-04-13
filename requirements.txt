@@ -1,4 +1,3 @@
-pip install these, to be completed later
 pillow
 watchdog
 wheel

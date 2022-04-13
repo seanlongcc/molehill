@@ -67,26 +67,25 @@ def tabLayout():
                 #databases. each database file is tried until a match is found.
                 elif name.lower().endswith('.db') or name in noExtension:
                     #convert db to csv
-                    try:
+                    try: #whatsapp
                         filepath = db_to_csv_MSG(name)
                     except:
                         try:
                             filepath = db_to_csv_WA(name)
                         except:
-                            try:
+                            try: #contacts
                                 filepath = db_to_csv_CON(name)
                             except:
-                                try:
+                                try: #viber
                                     filepath = db_to_csv_VD(name)
-                                    print("hello")
                                 except:
                                     try:
-                                        filepath = db_to_csv_TEL(name)
+                                        filepath = db_to_csv_VM(name)
                                     except:
-                                        try:
-                                            filepath = db_to_csv_VM(name)
+                                        try: #telegram
+                                            filepath = db_to_csv_TEL(name)(name)
                                         except:
-                                            try:
+                                            try: #fb messenger
                                                 filepath = db_to_csv_FBS(name)
                                             except:
                                                 try:
