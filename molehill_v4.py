@@ -48,10 +48,6 @@ def tabLayout():
                 #add name to used list
                 previousUploads.add(name)
                 tab = ttk.Frame(tabControl)
-                #give tab the current file name
-                tabControl.add(tab, text = name)
-                #organize the tabs
-                tabControl.pack(expand = True, fill ="both")
 
                 #text files
                 if name.lower().endswith('.txt'):
@@ -64,36 +60,46 @@ def tabLayout():
                         data = f.read()
                         #inserts data into the content window
                         content.insert(tk.END, data)
+                    tab_name = "Text: " + name[:-4]
 
                 #databases. each database file is tried until a match is found.
                 elif name.lower().endswith('.db') or name in noExtension:
                     #convert db to csv
                     try: #whatsapp
                         filepath = db_to_csv_MSG(name)
+                        tab_name = "WhatsApp Messages"
                     except:
                         try:
                             filepath = db_to_csv_WA(name)
+                            tab_name = "WhatsApp Contacts"
                         except:
                             try: #contacts
                                 filepath = db_to_csv_CON(name)
+                                tab_name = "Phone Contacts"
                             except:
                                 try: #viber
                                     filepath = db_to_csv_VD(name)
+                                    tab_name = "Viber Contacts"
                                 except:
                                     try:
                                         filepath = db_to_csv_VM(name)
+                                        tab_name = "Viber Messages"
                                     except:
                                         try: #telegram
                                             filepath = db_to_csv_TEL(name)(name)
+                                            tab_name = "Telegram"
                                         except:
                                             try: #fb messenger
                                                 filepath = db_to_csv_FBS(name)
+                                                tab_name = "Facebook Messenger S"
                                             except:
                                                 try:
                                                     filepath = db_to_csv_FBT(name)
+                                                    tab_name = "Facebook Messenger Texts"
                                                 except:
-                                                    try:
+                                                    try: # signal
                                                         filepath = db_to_csv_SIG(name)
+                                                        tab_name = "Signal"
                                                     except:
                                                         print("database function does not exist")
                     #display the csv
@@ -113,6 +119,12 @@ def tabLayout():
                     content.image = pic
                     #place the image
                     content.pack(expand = True, fill = "both")
+                    tab_name = "Image: " + name
+                    
+                #give tab the current file name
+                tabControl.add(tab, text = tab_name)
+                #organize the tabs
+                tabControl.pack(expand = True, fill ="both")
 
 #convert db to csv, tableName needs to be hardcoded
 def db_to_csv_MSG(name, tableName = "messages"):
