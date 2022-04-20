@@ -60,7 +60,7 @@ def tabLayout():
                         data = f.read()
                         #inserts data into the content window
                         content.insert(tk.END, data)
-                    tab_name = "Text: " + name[:-4]
+                    tab_name = name
 
                 #databases. each database file is tried until a match is found.
                 elif name.lower().endswith('.db') or name in noExtension:
@@ -83,7 +83,7 @@ def tabLayout():
                                 except:
                                     try:
                                         filepath = db_to_csv_FBT(name)
-                                        tab_name = "Facebook Messenger Thread Participants"
+                                        tab_name = "Facebook Messenger Messages"
                                     except:
                                         try: #viber
                                             filepath = db_to_csv_VD(name)
@@ -119,7 +119,7 @@ def tabLayout():
                     content.image = pic
                     #place the image
                     content.pack(expand = True, fill = "both")
-                    tab_name = "Image: " + name
+                    tab_name = name
                     
                 #give tab the current file name
                 tabControl.add(tab, text = tab_name)
@@ -127,6 +127,7 @@ def tabLayout():
                 tabControl.pack(expand = True, fill ="both")
 
 #convert db to csv, tableName needs to be hardcoded
+#whatsapp
 def db_to_csv_MSG(name, tableName = "messages"):
     #set the directory of the file to our current directory
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -145,6 +146,7 @@ def db_to_csv_MSG(name, tableName = "messages"):
     filepath = name[:-3] + ".csv"
     return filepath
 
+#whatsapp
 def db_to_csv_WA(name, tableName = "wa_contacts"):
     #set the directory of the file to our current directory
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -163,6 +165,7 @@ def db_to_csv_WA(name, tableName = "wa_contacts"):
     filepath = name[:-3] + ".csv"
     return filepath
 
+#contacts
 def db_to_csv_CON(name, tableName = "accounts"):
     #set the directory of the file to our current directory
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -172,7 +175,7 @@ def db_to_csv_CON(name, tableName = "accounts"):
     con = sqlite3.connect(db_path)
 
     #read the database file
-    df = pd.read_sql_query("SELECT * FROM {}".format(tableName), con)
+    df = pd.read_sql_query("SELECT _id, account_name, account_type FROM {}".format(tableName), con)
 
     #convert db to csv, is not a string
     df.to_csv(r'{}.csv'.format(name[:-3]), index = False)
@@ -181,6 +184,7 @@ def db_to_csv_CON(name, tableName = "accounts"):
     filepath = name[:-3] + ".csv"
     return filepath
 
+#viber
 def db_to_csv_VD(name, tableName = "phonebookcontact"):
     #set the directory of the file to our current directory
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -190,7 +194,7 @@ def db_to_csv_VD(name, tableName = "phonebookcontact"):
     con = sqlite3.connect(db_path)
 
     #read the database file
-    df = pd.read_sql_query("SELECT * FROM {}".format(tableName), con)
+    df = pd.read_sql_query("SELECT _id, native_id, phone_label, low_display_name, viber, contact_lookup_key, contact_hash, joined_date  FROM {}".format(tableName), con)
 
     #convert db to csv, is not a string
     df.to_csv(r'{}.csv'.format(name[:-3]), index = False)
@@ -199,6 +203,7 @@ def db_to_csv_VD(name, tableName = "phonebookcontact"):
     filepath = name[:-3] + ".csv"
     return filepath
 
+#viber
 def db_to_csv_VM(name, tableName = "messages"):
     #set the directory of the file to our current directory
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -208,7 +213,7 @@ def db_to_csv_VM(name, tableName = "messages"):
     con = sqlite3.connect(db_path)
 
     #read the database file
-    df = pd.read_sql_query("SELECT * FROM {}".format(tableName), con)
+    df = pd.read_sql_query("SELECT _id, conversation_id, msg_date, unread, extra_bucket_name, body, msg_info, timebomb FROM {}".format(tableName), con)
 
     #convert db to csv, is not a string
     df.to_csv(r'{}.csv'.format(name[:-3]), index = False)
@@ -216,7 +221,8 @@ def db_to_csv_VM(name, tableName = "messages"):
     #set filepath name
     filepath = name[:-3] + ".csv"
     return filepath
-    
+
+#telegram
 def db_to_csv_TEL(name, tableName = "messages_v2"):
     #set the directory of the file to our current directory
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -226,7 +232,7 @@ def db_to_csv_TEL(name, tableName = "messages_v2"):
     con = sqlite3.connect(db_path)
 
     #read the database file
-    df = pd.read_sql_query("SELECT * FROM {}".format(tableName), con)
+    df = pd.read_sql_query("SELECT mid, uid, read_state, send_state, date, data, out, media FROM {}".format(tableName), con)
 
     #convert db to csv, is not a string
     df.to_csv(r'{}.csv'.format(name[:-3]), index = False)
@@ -235,6 +241,7 @@ def db_to_csv_TEL(name, tableName = "messages_v2"):
     filepath = name[:-3] + ".csv"
     return filepath
 
+#facebook messenger contacts
 def db_to_csv_FBS(name, tableName = "search_items"):
     #set the directory of the file to our current directory
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -244,7 +251,7 @@ def db_to_csv_FBS(name, tableName = "search_items"):
     con = sqlite3.connect(db_path)
 
     #read the database file
-    df = pd.read_sql_query("SELECT * FROM {}".format(tableName), con)
+    df = pd.read_sql_query("SELECT fbid, display_name, first_name, last_name, picture_url, thread_type FROM {}".format(tableName), con)
 
     #convert db to csv, is not a string
     df.to_csv(r'{}.csv'.format(name[:-3]), index = False)
@@ -253,6 +260,7 @@ def db_to_csv_FBS(name, tableName = "search_items"):
     filepath = name[:-3] + ".csv"
     return filepath
 
+#facebook messenger messages
 def db_to_csv_FBT(name, tableName = "thread_participants"):
     #set the directory of the file to our current directory
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -262,7 +270,7 @@ def db_to_csv_FBT(name, tableName = "thread_participants"):
     con = sqlite3.connect(db_path)
 
     #read the database file
-    df = pd.read_sql_query("SELECT * FROM {}".format(tableName), con)
+    df = pd.read_sql_query("SELECT _id, thread_key, user_key, type, last_read_receipt_time, last_delivered_receipt_time, is_admin, admin_type FROM {}".format(tableName), con)
 
     #convert db to csv, is not a string
     df.to_csv(r'{}.csv'.format(name[:-3]), index = False)
@@ -271,6 +279,7 @@ def db_to_csv_FBT(name, tableName = "thread_participants"):
     filepath = name[:-3] + ".csv"
     return filepath
 
+#signal
 def db_to_csv_SIG(name, tableName = "mms"):
     #set the directory of the file to our current directory
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
