@@ -77,25 +77,25 @@ def tabLayout():
                                 filepath = db_to_csv_CON(name)
                                 tab_name = "Phone Contacts"
                             except:
-                                try: #viber
-                                    filepath = db_to_csv_VD(name)
-                                    tab_name = "Viber Contacts"
+                                try: #fb messenger
+                                    filepath = db_to_csv_FBS(name)
+                                    tab_name = "Facebook Messenger Contacts"
                                 except:
                                     try:
-                                        filepath = db_to_csv_VM(name)
-                                        tab_name = "Viber Messages"
+                                        filepath = db_to_csv_FBT(name)
+                                        tab_name = "Facebook Messenger Thread Participants"
                                     except:
-                                        try: #telegram
-                                            filepath = db_to_csv_TEL(name)(name)
-                                            tab_name = "Telegram"
+                                        try: #viber
+                                            filepath = db_to_csv_VD(name)
+                                            tab_name = "Viber Contacts"
                                         except:
-                                            try: #fb messenger
-                                                filepath = db_to_csv_FBS(name)
-                                                tab_name = "Facebook Messenger S"
+                                            try:
+                                                filepath = db_to_csv_VM(name)
+                                                tab_name = "Viber Messages"
                                             except:
-                                                try:
-                                                    filepath = db_to_csv_FBT(name)
-                                                    tab_name = "Facebook Messenger Texts"
+                                                try: #telegram
+                                                    filepath = db_to_csv_TEL(name)
+                                                    tab_name = "Telegram"
                                                 except:
                                                     try: # signal
                                                         filepath = db_to_csv_SIG(name)
@@ -235,7 +235,7 @@ def db_to_csv_TEL(name, tableName = "messages_v2"):
     filepath = name[:-3] + ".csv"
     return filepath
 
-def db_to_csv_FBS(name, tableName = "messages_v2"):
+def db_to_csv_FBS(name, tableName = "search_items"):
     #set the directory of the file to our current directory
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     db_path = os.path.join(BASE_DIR, name)
@@ -253,7 +253,7 @@ def db_to_csv_FBS(name, tableName = "messages_v2"):
     filepath = name[:-3] + ".csv"
     return filepath
 
-def db_to_csv_FBT(name, tableName = "messages_v2"):
+def db_to_csv_FBT(name, tableName = "thread_participants"):
     #set the directory of the file to our current directory
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     db_path = os.path.join(BASE_DIR, name)
@@ -315,7 +315,7 @@ def fileUpdate():
     for entry in os.scandir(path): 
         if entry.path.lower().endswith(('.txt', '.png', '.jpg', 'jpeg', '.db') + noExtension):
             #sleep timer for databases to load and convert
-            time.sleep(.01)
+            time.sleep(.1)
             #adds the file to the set
             uploadedFiles.add(entry.name)  
 
