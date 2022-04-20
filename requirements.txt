@@ -3,3 +3,5 @@ watchdog
 wheel
 pandas
 pandastable
+protobuf
+cryptography
