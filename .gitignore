@@ -10,6 +10,7 @@
 *.json
 *.sqlite
 *.pyc
+*.bin
 
 viber_data
 viber_messages
