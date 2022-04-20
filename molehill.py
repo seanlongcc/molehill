@@ -110,9 +110,9 @@ def tabLayout():
                     #open the picture to resize
                     img = Image.open(name)
                     #resize the image
-                    imgrs = img.resize((img.width // 3, img.height // 3),Image.ANTIALIAS)
+                    imgrs = img.resize((img.width, img.height),Image.ANTIALIAS)
                     #set the picture
-                    pic = ImageTk.PhotoImage(imgrs)
+                    pic = ImageTk.PhotoImage(imgrs) 
                     #set the label to display the picture
                     content = tkinter.Label(tab, image=pic)
                     #keep a reference to the tkinter object so that the picture shows: "Why do my Tkinter images not appear?"
