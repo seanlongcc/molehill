@@ -98,6 +98,7 @@ def tabLayout():
                                                     tab_name = "Telegram"
                                                 except:
                                                     try: # signal
+                                                        time.sleep(3) #extra sleep timer for the signal database to load
                                                         filepath = db_to_csv_SIG(name)
                                                         tab_name = "Signal"
                                                     except:
@@ -358,7 +359,7 @@ def fileWatch():
     try:
         while True:
             #set the thread sleep time
-            time.sleep(1)
+            time.sleep(.1)
     except KeyboardInterrupt:
         observer.stop()
     observer.join()
