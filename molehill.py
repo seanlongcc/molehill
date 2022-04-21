@@ -79,11 +79,11 @@ def tabLayout():
                             except:
                                 try: #fb messenger
                                     filepath = db_to_csv_FBS(name)
-                                    tab_name = "Facebook Messenger Contacts"
+                                    tab_name = "Messenger Contacts"
                                 except:
                                     try:
                                         filepath = db_to_csv_FBT(name)
-                                        tab_name = "Facebook Messenger Messages"
+                                        tab_name = "Messenger Messages"
                                     except:
                                         try: #viber
                                             filepath = db_to_csv_VD(name)
